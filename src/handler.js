@@ -2,7 +2,16 @@ const { nanoid } = require('nanoid');
 const books = require('./books');
 
 const addBookHandler = (request, h) => {
-  const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
+  const {
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading
+  } = request.payload;
 
   if (!name) {
     const response = h.response({
@@ -54,29 +63,20 @@ const addBookHandler = (request, h) => {
 };
 
 const getAllBooksHandler = (request, h) => {
-  const { name, reading, finished } = request.params;
-  const requestedBooks = [...books];
+  const { name, reading, finished } = request.query;
+  let requestedBooks = books;
 
   if (name) {
-    requestedBooks.filter(book => book.name.toLowerCase().includes(name.toLowerCase()));
+    requestedBooks = requestedBooks.filter(book => book.name.toLowerCase().includes(name.toLowerCase()));
   }
 
   if (reading) {
-    requestedBooks.filter(book => book.reading === Boolean(Number(reading)));
+    requestedBooks = requestedBooks.filter(book => Number(book.reading) === Number(reading));
   }
 
   if (finished) {
-    requestedBooks.filter(book => book.finished === Boolean(Number(finished)));
+    requestedBooks = requestedBooks.filter(book => Number(book.finished) === Number(finished));
   }
-
-  // if (books.length === 0) {
-  //   return {
-  //     status: 'success',
-  //     data: {
-  //       books: []
-  //     }
-  //   };
-  // }
 
   const response = h.response({
     status: 'success',
